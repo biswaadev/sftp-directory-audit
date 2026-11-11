@@ -1,39 +1,77 @@
-# SFTP Directory Audit Skill 🔍
+<div align="center">
 
-An AI agent skill designed to safely connect to remote servers over SFTP (read-only), inspect directories recursively, and explain exactly what each file does in concise, plain language.
+# 🔍 SFTP Directory Audit Skill
 
-Compatible with **Google Antigravity**, **Claude Code**, **Cowork**, and other AI coding agent environments supporting skill definitions.
+**An autonomous AI agent skill for safe, read-only remote server inspection & code explanation.**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg?style=for-the-badge)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/biswaadev/sftp-directory-audit?style=for-the-badge&logo=github&color=gold)](https://github.com/biswaadev/sftp-directory-audit/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/biswaadev/sftp-directory-audit?style=for-the-badge&logo=github&color=blue)](https://github.com/biswaadev/sftp-directory-audit/network/members)
+[![GitHub Issues](https://img.shields.io/github/issues/biswaadev/sftp-directory-audit?style=for-the-badge&color=orange)](https://github.com/biswaadev/sftp-directory-audit/issues)
+[![Last Commit](https://img.shields.io/github/last-commit/biswaadev/sftp-directory-audit?style=for-the-badge&color=purple)](https://github.com/biswaadev/sftp-directory-audit/commits/main)
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Google_Antigravity-Compatible-4285F4?style=flat-square&logo=google&logoColor=white" />
+  <img src="https://img.shields.io/badge/Claude_Code-Compatible-D97706?style=flat-square&logo=anthropic&logoColor=white" />
+  <img src="https://img.shields.io/badge/Cowork-Compatible-10B981?style=flat-square" />
+  <img src="https://img.shields.io/badge/Mode-100%25_Read--Only-red?style=flat-square" />
+</p>
+
+[Key Features](#-key-features) • [Architecture](#-how-it-works) • [Sample Output](#-interactive-sample-output) • [Installation](#-quick-installation) • [Usage Triggers](#-usage-triggers) • [Security](#-security--safety-guarantees)
 
 ---
+
+</div>
 
 ## 🌟 Key Features
 
-- **🔒 100% Read-Only Safety**: Strictly inspection-only. Never creates, modifies, renames, deletes, or changes file permissions.
-- **🛡️ Automatic Secret Masking**: Detects sensitive tokens, API keys, database credentials, and passwords, masking them completely to prevent accidental leaks.
-- **⚡ Crisp, No-Nonsense Explanations**: Delivers 1–2 line summaries describing the exact function of each file, avoiding unnecessary fluff, verbose lectures, or unsolicited refactoring advice.
-- **🧹 Smart Directory Filtering**: Automatically detects and skips heavy dependencies and build artifacts (`node_modules`, `.git`, `venv`, `__pycache__`, cache folders), noting them concisely.
-- **🗣️ Flexible Language & Tone**: Respects user preference—works seamlessly in English, Hinglish, or Hindi with a polite and direct tone.
+| Feature | Description |
+| :--- | :--- |
+| 🔒 **100% Read-Only Safety** | Strictly zero mutations. Never creates, modifies, renames, deletes, or changes file permissions. |
+| 🛡️ **Automatic Secret Masking** | Auto-detects passwords, private keys, API tokens, and database URIs — masks them completely in the report. |
+| ⚡ **Crisp, No-Nonsense Explanations** | Delivers 1–2 lines explaining exactly what each file does. No unsolicited refactoring advice or filler text. |
+| 🧹 **Smart Dependency Pruning** | Automatically skips heavy clutter folders (`node_modules`, `.venv`, `.git`, `__pycache__`, caches) while reporting them in one line. |
+| 🌐 **Bilingual (Hinglish + English)** | Fluently handles queries in plain English, Hinglish, or Hindi with a respectful, direct tone. |
+| 🧠 **In-Memory Credential Handling** | Passwords and private keys are never persisted to disk, session logs, or files. |
 
 ---
 
-## 📋 How It Works
+## 🔄 Dynamic Workflow Pipeline
 
-1. **Input Collection**: Prompts only for missing credentials (Host, Port, Username, Password/SSH Key, and Remote Directory Path).
-2. **Secure Connection**: Establishes an ephemeral SFTP/SSH session. Credentials are used strictly in-memory during the session and are never saved or logged to disk.
-3. **Recursive Directory Traversal**: Navigates the target directory and subdirectories without straying outside the root target.
-4. **Content Analysis**:
-   - **Code & Text files** (`.py`, `.js`, `.ts`, `.sh`, `.json`, `.yml`, `.conf`, `.html`, etc.): Reads contents to deduce primary responsibility.
-   - **Binary & Media files** (`.zip`, `.png`, `.so`, executables, etc.): Identifies file type by metadata without loading full binaries.
-5. **Structured Report**: Produces a clean, folder-by-folder breakdown.
+```mermaid
+flowchart TD
+    A["🔑 Runtime Credentials Input"] --> B["⚡ Ephemeral SSH / SFTP Session"]
+    B --> C["📁 Recursive Directory Traversal"]
+    
+    C --> D{"🔍 Item Type Check"}
+    D -->|"Heavy Folders (.git, venv, node_modules)"| E["⏩ Prune & Note in One Line"]
+    D -->|"Binary / Media / Archive (.zip, .png, .db)"| F["📦 Identify via Metadata Only"]
+    D -->|"Code / Text (.py, .js, .sh, .json, etc.)"| G["📖 Read Snippet & Deduce Role"]
+    
+    G --> H["🛡️ Mask Sensitive Secrets"]
+    E --> I["📋 Generate Structured Report"]
+    F --> I
+    H --> I
+    I --> J["📊 Final File Count Summary"]
+
+    style A fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
+    style B fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style H fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style I fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style J fill:#ede7f6,stroke:#512da8,stroke-width:2px
+```
 
 ---
 
-## 📊 Sample Output
+## 📊 Interactive Sample Output
+
+<details open>
+<summary><b>🔹 Example 1: Web Application Audit (Click to Collapse)</b></summary>
 
 ```markdown
 📁 project/src/
 - auth.py: Handles user JWT authentication and password hashing
-- database.py: Configures SQLAlchemy engine and database connection pool
+- database.py: Configures SQLAlchemy engine and connection pool
 - config.json: Application settings (contains masked API keys)
 
 📁 project/src/utils/
@@ -41,52 +79,93 @@ Compatible with **Google Antigravity**, **Claude Code**, **Cowork**, and other A
 - helpers.py: Helper functions for string formatting and date parsing
 
 📁 project/node_modules/ (skipped - dependency folder)
+📁 project/.venv/ (skipped - virtual environment folder)
 
 ✅ Checked 14 files across 3 directories.
 ```
 
+</details>
+
+<details>
+<summary><b>🔹 Example 2: Container / Hosting Volume Audit</b></summary>
+
+```markdown
+📁 /var/lib/pterodactyl/
+- states.json: Stores live running/offline status of each container
+- wings.db: SQLite database storing Wings daemon activities and logs
+
+📁 /var/lib/pterodactyl/backups/
+- c8c524fb.tar.gz: Compressed server volume full backup archive
+
+📁 /var/lib/pterodactyl/volumes/3549ec41/
+- main.py: Telegram bot manager script that hosts user bots
+- requirements.txt: Python dependencies list (pyTelegramBotAPI, Flask, psutil)
+- bot_data.db: SQLite database storing bot user configs and process IDs
+
+✅ Checked 3 files and 1 volume container.
+```
+
+</details>
+
 ---
 
-## 🚀 Installation
+## 🚀 Quick Installation
+
+Select your AI coding assistant environment:
 
 ### 1. Google Antigravity / Gemini CLI
-Clone the skill into your personal skills directory:
-
 ```bash
-# Global installation
+# Global user skills directory
 git clone https://github.com/biswaadev/sftp-directory-audit.git ~/.gemini/skills/sftp-directory-audit
 
-# Or workspace-specific installation
+# Workspace-specific skills directory
 git clone https://github.com/biswaadev/sftp-directory-audit.git .agents/skills/sftp-directory-audit
 ```
 
-### 2. Claude Code / Other Agent Frameworks
-Clone into your agent's skills path:
-
+### 2. Claude Code
 ```bash
+# Global Claude skills directory
 git clone https://github.com/biswaadev/sftp-directory-audit.git ~/.claude/skills/sftp-directory-audit
+```
+
+### 3. Cowork / Custom Agent Directory
+```bash
+git clone https://github.com/biswaadev/sftp-directory-audit.git path/to/your/agent/skills/sftp-directory-audit
 ```
 
 ---
 
 ## 💬 Usage Triggers
 
-You can activate this skill by giving prompts such as:
-- *"Check my server folder `/var/www/my-app` over SFTP."*
-- *"Ye server ki directory check karke ek ek file ka kaam batao."*
-- *"Audit remote directory on 192.168.1.100 and summarize what each script does."*
-- *"Is remote folder me konsi file kya karti hai batao."*
+You can activate this skill naturally in your chat session using English or Hinglish:
+
+<div align="center">
+
+| English Prompts | Hinglish / Hindi Prompts |
+| :--- | :--- |
+| *"Audit remote directory `/var/www/my-app` over SFTP."* | *"Server ki directory check karo ek ek karke konsi file kya karti hai.*" |
+| *"Inspect `/etc/nginx` on my VPS and explain what each file does."* | *"Ye remote folder check karke batao konsi script kis kaam ki hai."* |
+| *"Connect to 54.206.35.63 over SFTP and audit `/home/user/bot`."* | *"Server pe check karo konsi .py aur .js file kya kaam kar rahi hai."* |
+
+</div>
 
 ---
 
-## 🔒 Security & Safety Principles
+## 🔒 Security & Safety Guarantees
 
-1. **Ephemeral Credentials**: SSH passwords and private keys are never written to disk, session logs, or output reports.
-2. **Directory Boundary**: The audit stays confined within the provided target path and never follows symlinks pointing outside.
-3. **No Unsolicited Modifications**: Even if asked to edit or delete files during an audit, the skill refuses mutation operations and preserves read-only integrity.
+> [!IMPORTANT]
+> **Zero Credential Persistence**: Passwords and SSH private keys provided during the prompt are held strictly in temporary execution memory and discarded when the turn completes. Nothing is ever written to disk or recorded in git.
+
+> [!NOTE]
+> **Strict Boundary Enforcement**: The crawler never navigates to parent directories (`..`) or follows symbolic links that resolve outside the requested root folder.
+
+> [!TIP]
+> **Safe Large Directory Handling**: For directories exceeding 500 files, the audit batches the analysis folder-by-folder to maintain responsive agent output and stay well within context token limits.
 
 ---
 
 ## 📄 License
 
-MIT License. See [LICENSE](LICENSE) for details.
+This project is open-source and available under the **[MIT License](LICENSE)**.
+
+Developed & Maintained by **[Biswaa Dev](https://github.com/biswaadev)**.
